@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fight.dao.AdminUserMapper">
+
+    <!--插入用户-->
+    <insert id="insert" parameterType="com.fight.entity.AdminUser" >
+        insert into tb_admin_user (admin_user_id, login_user_name, login_password,
+          nick_name, locked)
+        values (#{adminUserId,jdbcType=INTEGER}, #{loginUserName,jdbcType=VARCHAR}, #{loginPassword,jdbcType=VARCHAR},
+          #{nickName,jdbcType=VARCHAR}, #{locked,jdbcType=TINYINT})
+    </insert>
+
+    <!--查询用户-->
+    <select id="selectByPrimaryKey" resultType="com.fight.entity.AdminUser">
+        select * from myblob.tb_admin_user where admin_user_id = #{adminUserId}
+    </select>
+    <!--登陆-->
+    <select id="login" resultType="com.fight.entity.AdminUser">
+        select * from myblob.tb_admin_user where login_user_name = #{loginUserName} and login_password = #{loginPassword} and locked = 0
+    </select>
+
+    <!--更新用户信息-->
+    <update id="updateByPrimaryKey"  parameterType="com.fight.entity.AdminUser" >
+        update myblob.tb_admin_user
+        set
+            login_user_name = #{loginUserName},
+            login_password = #{loginPassword},
+            nick_name = #{nickName},
+            locked = #{locked}
+        where admin_user_id = #{adminUserId}
+    </update>
+
+    <!--这里需要注意-->
+    <update id="updateByPrimaryKeySelective" parameterType="com.fight.entity.AdminUser" >
+        update myblob.tb_admin_user
+        <set>
+            <if test="loginUserName != null">
+                login_user_name = #{loginUserName}
+            </if>
+            <if test="loginPassword != null">
+                login_password = #{loginPassword}
+            </if>
+            <if test="nickName != null">
+                nick_name = #{nickName}
+            </if>
+            <if test="locked != null">
+                locked = #{locked}
+            </if>
+        </set>
+        where admin_user_id = #{adminUserId}
+    </update>
+
+    <!--动态插入用户 trim用于自定义-->
+    <insert id="insertSecective" parameterType="com.fight.entity.AdminUser" >
+        insert into tb_admin_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adminUserId != null">
+                admin_user_id,
+            </if>
+            <if test="loginUserName != null">
+                login_user_name,
+            </if>
+            <if test="loginPassword != null">
+                login_password,
+            </if>
+            <if test="nickName != null">
+                nick_name,
+            </if>
+            <if test="locked != null">
+                locked,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="adminUserId != null">
+                #{adminUserId,jdbcType=INTEGER},
+            </if>
+            <if test="loginUserName != null">
+                #{loginUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="loginPassword != null">
+                #{loginPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null">
+                #{nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="locked != null">
+                #{locked,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+</mapper>
